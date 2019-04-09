@@ -63,7 +63,7 @@ class BaseFairseqModel(nn.Module):
         this additionally "upgrades" *state_dicts* from old checkpoints.
         """
         self.upgrade_state_dict(state_dict)
-        super().load_state_dict(state_dict, strict)
+        #super().load_state_dict(state_dict, strict)
 
     def upgrade_state_dict(self, state_dict):
         """Upgrade old state dicts to work with newer code."""
