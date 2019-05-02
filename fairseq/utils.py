@@ -19,7 +19,6 @@ import torch
 import torch.nn.functional as F
 from torch.serialization import default_restore_location
 
-
 def torch_persistent_save(*args, **kwargs):
     for i in range(3):
         try:
@@ -317,6 +316,11 @@ def make_positions(tensor, padding_idx, onnx_trace=False):
 
     Position numbers begin at padding_idx+1. Padding symbols are ignored.
     """
+    if onnx_trace:
+        mask = (tensor.float().abs() - padding_idx).clamp(max=1).long()
+        cumsum = torch.LongTensor([i for i in range(15)]).unsqueeze(0).expand_as(tensor)
+        return cumsum * mask + padding_idx + 1
+
     mask = tensor.ne(padding_idx).long()
     return torch.cumsum(mask, dim=1) * mask + padding_idx
 
