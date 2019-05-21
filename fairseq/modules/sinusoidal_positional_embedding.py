@@ -76,9 +76,8 @@ class SinusoidalPositionalEmbedding(nn.Module):
 
         positions = utils.make_positions(input, self.padding_idx, onnx_trace=self.onnx_trace)
         if self.onnx_trace:
-            flat_embeddings = self.weights.index_select(0, positions.view(-1).long())
-            # embedding_shape = torch.cat((bsz.view(1), seq_len.view(1), torch.LongTensor([-1])))
-            embedding_shape = torch.LongTensor([1, 15, -1])
+            flat_embeddings = self.weights[positions.long()]
+            embedding_shape = torch.LongTensor([1, 15, 256])
             embeddings = torch.onnx.operators.reshape_from_tensor_shape(flat_embeddings, embedding_shape)
             return embeddings
         return self.weights.index_select(0, positions.view(-1)).view(bsz, seq_len, -1).detach()

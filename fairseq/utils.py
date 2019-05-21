@@ -317,8 +317,8 @@ def make_positions(tensor, padding_idx, onnx_trace=False):
     Position numbers begin at padding_idx+1. Padding symbols are ignored.
     """
     if onnx_trace:
-        mask = (tensor.float().abs() - padding_idx).clamp(max=1).int()
-        cumsum = torch.IntTensor([i for i in range(15)]).unsqueeze(0)
+        mask = (tensor - padding_idx).clamp(max=1).float()
+        cumsum = torch.FloatTensor([float(i) for i in range(15)]).unsqueeze(0)
         return cumsum * mask + padding_idx + 1
 
     mask = tensor.ne(padding_idx).long()
